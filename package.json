@@ -1,0 +1,36 @@
+{
+  "name": "data-deidentification-engine",
+  "version": "2.0.0",
+  "description": "High-performance Data De-identification & Reversible Tokenization Engine for Generative AI and LLM Pipelines",
+  "main": "src/index.ts",
+  "scripts": {
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy",
+    "test": "vitest run",
+    "test:utility": "node test-utility-apis.js",
+    "test:api": "node test_api_connection.js",
+    "test:connection": "node test_api_connection.js"
+  },
+  "keywords": [
+    "privacy",
+    "de-identification",
+    "tokenization",
+    "detokenization",
+    "anonymization",
+    "llm-security",
+    "fpe",
+    "dpga",
+    "digital-public-goods"
+  ],
+  "author": "Open AI Privacy Project",
+  "license": "MIT",
+  "dependencies": {
+    "hono": "^4.7.0"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "^4.20250214.0",
+    "typescript": "^5.7.3",
+    "vitest": "^3.0.5",
+    "wrangler": "^3.109.2"
+  }
+}

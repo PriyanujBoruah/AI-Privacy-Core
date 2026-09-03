@@ -1,0 +1,91 @@
+import { Rule } from "./types";
+import { passesLuhnChecksum, validateIBAN } from "../validators/global";
+
+export const GLOBAL_RULES: Rule[] = [
+  {
+    id: "RULE_DEV_KEYS",
+    type: "SECRET_KEY",
+    category: "global",
+    pattern: /\b(?:sk-[a-zA-Z0-9]{20,60}|AIza[0-9A-Za-z-_]{35}|AKIA[0-9A-Z]{16}|ghp_[a-zA-Z0-9]{36}|key-[a-zA-Z0-9]{32})\b/g,
+    tokenPrefix: "API_KEY",
+  },
+  {
+    id: "RULE_EMAIL",
+    type: "PII_EMAIL",
+    category: "global",
+    pattern: /\b[A-Za-z0-9._%+-]{1,64}@[A-Za-z0-9.-]{1,255}\.[A-Za-z]{2,10}\b/g,
+    tokenPrefix: "EMAIL",
+  },
+  {
+    id: "RULE_PHONE",
+    type: "PII_PHONE",
+    category: "global",
+    pattern: /(?<!\d)(?:\+\d{1,3}[-.\s]?)?\(?\d{3}\)?[-.\s]?\d{3}[-.\s]?\d{4}\b/g,
+    tokenPrefix: "PHONE",
+  },
+  {
+    id: "RULE_CREDIT_CARD",
+    type: "FIN_CARD",
+    category: "global",
+    pattern: /\b(?:4[0-9]{12}(?:[0-9]{3})?|5[1-5][0-9]{14}|3[47][0-9]{13}|3(?:0[0-5]|[68][0-9])[0-9]{11}|6(?:011|5[0-9]{2})[0-9]{12}|(?:2131|1800|35\d{3})\d{11})\b|\b(?:\d{4}[-\s]?){3}\d{4}\b/g,
+    tokenPrefix: "CARD",
+    validator: (cardStr) => passesLuhnChecksum(cardStr),
+  },
+  {
+    id: "RULE_IBAN",
+    type: "FIN_IBAN",
+    category: "global",
+    pattern: /\b[A-Z]{2}\d{2}[A-Z0-9]{11,30}\b/gi,
+    tokenPrefix: "IBAN",
+    validator: (ibanStr) => validateIBAN(ibanStr),
+  },
+  {
+    id: "RULE_SWIFT_BIC",
+    type: "FIN_SWIFT",
+    category: "global",
+    pattern: /\b[A-Z]{6}[A-Z0-9]{2}(?:[A-Z0-9]{3})?\b/g,
+    tokenPrefix: "SWIFT",
+  },
+  {
+    id: "RULE_CRYPTO_BTC",
+    type: "CRYPTO_BTC",
+    category: "global",
+    pattern: /\b(?:[13][a-km-zA-HJ-NP-Z1-9]{25,34}|bc1[ac-hj-np-z02-9]{38,59})\b/g,
+    tokenPrefix: "CRYPTO_BTC",
+  },
+  {
+    id: "RULE_CRYPTO_ETH",
+    type: "CRYPTO_ETH",
+    category: "global",
+    pattern: /\b0x[a-fA-F0-9]{40}\b/g,
+    tokenPrefix: "CRYPTO_ETH",
+  },
+  {
+    id: "RULE_IPV4",
+    type: "NET_IPV4",
+    category: "global",
+    pattern: /\b(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\b/g,
+    tokenPrefix: "IPV4",
+  },
+  {
+    id: "RULE_JWT_TOKEN",
+    type: "SECRET_JWT",
+    category: "global",
+    pattern: /\beyJ[A-Za-z0-9-_=]{10,}\.eyJ[A-Za-z0-9-_=]{10,}\.[A-Za-z0-9-_.+/=]{10,}\b/g,
+    tokenPrefix: "JWT",
+  },
+  {
+    id: "RULE_INVOICE",
+    type: "FIN_INVOICE",
+    category: "global",
+    pattern: /#?(?:INV|ORD|ACC|TIC|CASE|MRN)-\d{3,10}\b/gi,
+    tokenPrefix: "INVOICE",
+  },
+  {
+    id: "RULE_CONTEXT_NAME",
+    type: "PII_NAME",
+    category: "global",
+    pattern: /(?:^|[\s"'])(?:Customer|Patient|User|Client|Contact|Dear|Name:|Mr\.|Mrs\.|Ms\.|Dr\.)\s+([A-Z\u00C0-\u00DD\u4E00-\u9FFF\u0600-\u06FF\u0900-\u097F][a-z\u00DE-\u024F\u4E00-\u9FFF\u0600-\u06FF\u0900-\u097F]{1,30}(?:\s+[A-Z\u00C0-\u00DD\u4E00-\u9FFF\u0600-\u06FF\u0900-\u097F][a-z\u00DE-\u024F\u4E00-\u9FFF\u0600-\u06FF\u0900-\u097F]{1,30}){0,2})/gu,
+    tokenPrefix: "PERSON",
+  },
+];

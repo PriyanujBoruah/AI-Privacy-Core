@@ -1,0 +1,204 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "Data De-identification and Reversible Tokenization Engine API",
+    "description": "High-performance open-source utility for real-time PII de-identification, format-preserving masking, and reversible tokenization. Listed under UN Digital Public Goods Alliance (SDG 9 and SDG 16).",
+    "version": "2.0.0",
+    "license": {
+      "name": "MIT",
+      "url": "https://opensource.org/licenses/MIT"
+    }
+  },
+  "paths": {
+    "/v1/tokenize": {
+      "post": {
+        "summary": "Anonymize / De-identify Payload",
+        "description": "Interprets input text and replaces sensitive PII, financial identifiers, government IDs, and custom keywords with reversible synthetic tokens.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "text"
+                ],
+                "properties": {
+                  "text": {
+                    "type": "string",
+                    "example": "Contact Alice Wong (email: alice.w@fintech.sg, SSN: 123-45-6789)."
+                  },
+                  "mode": {
+                    "type": "string",
+                    "enum": [
+                      "structural",
+                      "fpe"
+                    ],
+                    "default": "structural"
+                  },
+                  "categories": {
+                    "type": "array",
+                    "description": "Optional array of up to 2 Canonical Pack IDs (e.g. ['asia_non_sea', 'north_america']). Individual country codes are not accepted. Defaults to ['global'].",
+                    "items": {
+                      "type": "string"
+                    },
+                    "maxItems": 2,
+                    "example": [
+                      "asia_non_sea",
+                      "north_america"
+                    ]
+                  },
+                  "customKeywords": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "example": [
+                      "ProjectNexus"
+                    ]
+                  },
+                  "ttlSeconds": {
+                    "type": "integer",
+                    "default": 300
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successfully tokenized payload",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "mode": {
+                      "type": "string",
+                      "example": "structural"
+                    },
+                    "sessionId": {
+                      "type": "string",
+                      "example": "sess_tok_efcwiirpiu"
+                    },
+                    "sanitizedText": {
+                      "type": "string"
+                    },
+                    "entitiesCount": {
+                      "type": "integer"
+                    },
+                    "entitiesDetected": {
+                      "type": "array",
+                      "items": {
+                        "type": "object"
+                      }
+                    },
+                    "categoriesApplied": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      },
+                      "example": [
+                        "global",
+                        "asia_non_sea"
+                      ]
+                    },
+                    "expiresAt": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/detokenize": {
+      "post": {
+        "summary": "Rehydrate / Restore Payload",
+        "description": "Restores synthetic tokens back to original values using the temporary session vault map.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "sessionId",
+                  "tokenizedText"
+                ],
+                "properties": {
+                  "sessionId": {
+                    "type": "string",
+                    "example": "sess_tok_efcwiirpiu"
+                  },
+                  "tokenizedText": {
+                    "type": "string",
+                    "example": "Payment confirmed for EMAIL_1."
+                  },
+                  "purgeAfterRead": {
+                    "type": "boolean",
+                    "default": false
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successfully rehydrated text",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "rehydratedText": {
+                      "type": "string"
+                    },
+                    "tokensResolved": {
+                      "type": "integer"
+                    },
+                    "sessionStatus": {
+                      "type": "string",
+                      "example": "active"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/health": {
+      "get": {
+        "summary": "System Health Check",
+        "responses": {
+          "200": {
+            "description": "Service status and version",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": "ok"
+                    },
+                    "version": {
+                      "type": "string",
+                      "example": "2.0.0"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

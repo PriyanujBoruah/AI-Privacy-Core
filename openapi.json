@@ -2,7 +2,7 @@
   "openapi": "3.0.3",
   "info": {
     "title": "Data De-identification and Reversible Tokenization Engine API",
-    "description": "High-performance open-source utility for real-time PII de-identification, format-preserving masking, and reversible tokenization. Listed under UN Digital Public Goods Alliance (SDG 9 and SDG 16).",
+    "description": "High-performance open-source utility for real-time PII de-identification, format-preserving masking, and reversible tokenization.",
     "version": "2.0.0",
     "license": {
       "name": "MIT",

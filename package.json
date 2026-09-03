@@ -19,8 +19,8 @@
     "anonymization",
     "llm-security",
     "fpe",
-    "dpga",
-    "digital-public-goods"
+    "data-privacy",
+    "cloudflare-workers"
   ],
   "author": "Open AI Privacy Project",
   "license": "MIT",

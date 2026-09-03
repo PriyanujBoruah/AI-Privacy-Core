@@ -1,8 +1,6 @@
 # 🛡️ Data De-identification & Reversible Tokenization Engine
 
 > **A high-performance, open-source utility for real-time PII de-identification, format-preserving masking, and reversible tokenization across Generative AI and LLM inference pipelines.**
-> 
-> *Submitted for listing on the [United Nations Digital Public Goods Alliance (DPGA)](https://digitalpublicgoods.net/).*
 
 ---
 

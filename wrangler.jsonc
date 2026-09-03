@@ -5,5 +5,12 @@
   "compatibility_date": "2025-02-14",
   "observability": {
     "enabled": true
-  }
+  },
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "privacy-db",
+      "database_id": "3c044753-b439-410a-b47b-69fd529acec3"
+    }
+  ]
 }

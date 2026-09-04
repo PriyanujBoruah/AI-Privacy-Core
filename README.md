@@ -29,6 +29,7 @@
 - [Country-Wise Sovereign ID Coverage & Validation Engines](#-country-wise-sovereign-id-coverage--validation-engines)
 - [Open-Source Sustainable Development (UN SDGs)](#-open-source-sustainable-development-un-sdgs)
 - [License](#-license)
+- [Contributing & Security Disclosures](#-contributing--security-disclosures)
 
 ---
 
@@ -371,7 +372,7 @@ Coverage spans **109 Sovereign Jurisdictions across 9 Canonical Packs** (75+ wit
 | 🇨🇳 **China** | `asia_non_sea` | Resident Identity Card (居民身份证) | 18-digit ISO 7064 Mod 11-2 check-code formula |
 | 🇸🇦 **Saudi Arabia** | `asia_non_sea` | National ID (الهوية الوطنية), Iqama (إقامة) | 10-digit Luhn Mod-10 validation (1=Citizen, 2=Resident) |
 | 🇦🇪 **United Arab Emirates** | `asia_non_sea` | Emirates ID Card (هوية مقيم) | 15-digit Luhn Mod-10 check on trailing sequence digit |
-| 🇮🇱 **Israel** | `asia_non_sea` | Teudat Zehut (תעودת זהות) | 9-digit weighted Luhn Mod-10 checksum |
+| 🇮🇱 **Israel** | `asia_non_sea` | Teudat Zehut (תעודת זהות) | 9-digit weighted Luhn Mod-10 checksum |
 | 🇹🇷 **Turkey** | `asia_non_sea` | T.C. Kimlik No (TCKN) | 11-digit dual-stage Mod-10 checksum formula |
 | 🇺🇸 **United States** | `north_america` | SSN, ABA Routing, Medicare MBI, NPI, DEA | Area exclusions, Federal Reserve Mod-10, Luhn, DEA Checksum |
 | 🇨🇦 **Canada** | `north_america` | Social Insurance Number (SIN), Health OHIP | 9-digit Luhn Mod-10 (SIN), 10-digit Luhn (OHIP) |
@@ -442,3 +443,12 @@ AI Privacy Core aligns directly with the official United Nations Sustainable Dev
 ## 📜 License
 
 Licensed under the **[Apache-2.0 License](LICENSE)**. Free, open, and transparent Digital Public Infrastructure for all developers.
+
+---
+
+## 🤝 Contributing & Security Disclosures
+
+We welcome contributions, additional sovereign checksum validators, and regional pack expansions!
+
+- **Contributing**: Please review [CONTRIBUTING.md](CONTRIBUTING.md) for code style, test requirements, and PR guidelines.
+- **Reporting Vulnerabilities**: To report security issues or sensitive algorithmic bypasses, please open a private GitHub Security Advisory or contact the core maintainers directly. Do not file public issues for active vulnerabilities.

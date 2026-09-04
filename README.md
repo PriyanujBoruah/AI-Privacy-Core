@@ -3,11 +3,13 @@
 > **Open-source, zero-trust privacy gateway for LLM pipelines. Tokenizes sensitive PII, sovereign national IDs, and financial records with mathematical checksum precision and sub-5ms edge latency.**
 
 [![License: Apache-2.0](https://img.shields.io/badge/License-Apache--2.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
-[![Tests: 95 Passing](https://img.shields.io/badge/Tests-95%20Passing-brightgreen.svg)]()
-[![Runtime: Cloudflare V8](https://img.shields.io/badge/Runtime-Cloudflare%20V8%20Edge-orange.svg)]()
-[![Coverage: 75+ Nations](https://img.shields.io/badge/Coverage-75%2B%20Nations-indigo.svg)]()
-[![Latency: Sub-5ms](https://img.shields.io/badge/Latency-%3C%205ms%20Edge%20SLA-emerald.svg)]()
-[![Zero Data Retention](https://img.shields.io/badge/Compliance-Zero%20Data%20Retention%20(ZDR)-success.svg)]()
+![Tests: 95 Passing](https://img.shields.io/badge/Tests-95%20Passing-brightgreen.svg)
+![Runtime: Cloudflare V8](https://img.shields.io/badge/Runtime-Cloudflare%20V8%20Edge-orange.svg)
+![Coverage: 109 Jurisdictions](https://img.shields.io/badge/Coverage-109%20Jurisdictions-indigo.svg)
+![Latency: Sub-5ms](https://img.shields.io/badge/Latency-%3C%205ms%20Edge%20SLA-emerald.svg)
+![Zero Data Retention](https://img.shields.io/badge/Compliance-Zero%20Data%20Retention%20(ZDR)-success.svg)
+
+🌐 **Documentation & Live Playground:** [priyanujboruah.github.io/AI-Privacy-Core](https://priyanujboruah.github.io/AI-Privacy-Core/)
 
 ---
 
@@ -36,16 +38,16 @@
 
 When users interact with frontier models (OpenAI GPT-4, Google Gemini, Anthropic Claude, open-source Llama), prompts frequently leak high-risk data: credit card numbers, national identification numbers, bank accounts, emails, and medical records. **AI Privacy Core** intercepts user prompts at the network edge, neutralizes sensitive data with deterministic surrogate tokens, and seamlessly rehydrates model responses before delivering them back to end users.
 
-### Key Metrics
+### Standardized System Metrics
 
 | Metric | Specification |
 |---|---|
 | **Edge Execution SLA** | `< 5 ms` global latency overhead |
-| **Sovereign Nations Covered** | `75+` sovereign states and territories |
-| **Algorithmic Checksum Engines** | `67` standalone mathematical verification formulas |
-| **Pattern Detectors** | `185` sovereign, financial, and context rules |
+| **Geographic Coverage** | **109 Sovereign Jurisdictions** across 9 Canonical Packs (75+ with dedicated national ID checksums, 200+ for global financial and telecom standards) |
+| **Algorithmic Checksum Engines** | `67` standalone mathematical verification formulas (Verhoeff, Luhn, ISO 7064, Mod-11, Mod-23, Mod-26, Elfproef) |
+| **Pattern Rules** | `185` sovereign, financial, and context rules |
 | **Runtime Requirements** | Serverless V8 Edge Isolates (Cloudflare Workers), Node.js 18+, Bun |
-| **Storage Architecture** | Ephemeral in-memory RAM (zero disk persistence) or Cloudflare D1 SQL |
+| **Storage Architecture** | Ephemeral in-memory RAM (zero disk persistence) or optional Cloudflare D1 SQL |
 | **Roundtrip Rehydration** | 100% exact, deterministic restoration with coreference consistency |
 
 ---
@@ -53,31 +55,42 @@ When users interact with frontier models (OpenAI GPT-4, Google Gemini, Anthropic
 ## 🏗️ Architecture & Core Differentiators
 
 ```
-[ User Prompt ]
-       │
-       ▼
-┌─────────────────────────────────────────────────────────┐
-│                   AI PRIVACY CORE                       │
-│  1. 4-Tier Disambiguation (Exact, Checksum, Context)   │
-│  2. Mathematical Checksum Verification (67 Engines)     │
-│  3. Reversible Token Substitution (CARD_1, PERSON_1)   │
-│  4. Ephemeral Vault / Zero-Disk RAM Session Storage     │
-└─────────────────────────────────────────────────────────┘
-       │
-       ▼ (Sanitized Prompt)
-[ Third-Party LLM / Frontier API ]
-       │
-       ▼ (Model Response with Tokens)
-┌─────────────────────────────────────────────────────────┐
-│               REHYDRATION GATEWAY                       │
-│  1. Session Lookup (Token -> Original Entity)           │
-│  2. Exact String Rehydration                            │
-│  3. Cryptographic Zero Data Retention (purgeAfterRead)  │
-└─────────────────────────────────────────────────────────┘
-       │
-       ▼
-[ Clean, Original Response to User ]
+[ Client Application / User Prompt ]
+                │
+                ▼ (Raw text containing PII / Sovereign IDs)
+┌───────────────────────────────────────────────────────────────────────────┐
+│                       AI PRIVACY CORE (Edge Gateway)                      │
+│                                                                           │
+│  1. 4-Tier Disambiguation (Exact, Checksum, Context, Enterprise Keywords)│
+│  2. Mathematical Checksum Verification (67 Algorithmic Engines)           │
+│  3. Reversible Token Substitution (e.g. CARD_1, PERSON_1, ZA_ID_1)        │
+│  4. Ephemeral Vault / Zero-Disk RAM Session Storage (TTL Auto-Eviction)   │
+└───────────────────────────────────────────────────────────────────────────┘
+                │
+                ▼ (Sanitized Prompt with Synthetic Tokens)
+┌───────────────────────────────────────────────────────────────────────────┐
+│        UPSTREAM THIRD-PARTY LLM / INFERENCE PIPELINE (External)           │
+│                                                                           │
+│  OpenAI GPT-4 / Google Gemini / Anthropic Claude / vLLM / Ollama          │
+│  (Processes query without ever seeing plaintext PII or Sovereign IDs)     │
+└───────────────────────────────────────────────────────────────────────────┘
+                │
+                ▼ (Model Response containing Synthetic Tokens)
+┌───────────────────────────────────────────────────────────────────────────┐
+│                       AI PRIVACY CORE (Rehydration)                       │
+│                                                                           │
+│  1. Session Lookup (Token -> Original Entity)                             │
+│  2. Exact String Rehydration & Coreference Resolution                     │
+│  3. Cryptographic Zero Data Retention (purgeAfterRead: true)              │
+└───────────────────────────────────────────────────────────────────────────┘
+                │
+                ▼ (Restored, Plaintext Response)
+[ Client Application / User ]
 ```
+
+> **Boundary & Stateless Execution Note:**
+> - **Where the open-source code starts & ends**: AI Privacy Core is an independent, self-contained edge gateway layer encompassing tokenization, checksum validation, ephemeral vault management, and detokenization. It sits strictly between the client and upstream LLMs. Upstream AI providers (OpenAI, Anthropic, Google, open-source inference servers) are external services that receive only de-identified text.
+> - **How it runs statelessly**: AI Privacy Core executes in a stateless, zero-trust paradigm. It requires no persistent disk storage. When deployed without a database binding, all token-to-entity mappings exist solely in volatile RAM, isolated per edge worker invocation. Setting `purgeAfterRead: true` cryptographically destroys the mapping the microsecond it is accessed. No user prompts, tokens, or decrypted entities are ever logged to disk, shared upstream, or retained.
 
 ### 1. 4-Tier Detection Hierarchy & Disambiguation
 - **Tier 1: High-Confidence Formats**: Cryptographic keys, emails, international phone numbers (E.164), cryptocurrency addresses (Bitcoin, Ethereum, Solana).
@@ -339,6 +352,8 @@ To maintain the strict sub-5ms edge SLA guarantee, each API request accepts a **
 ---
 
 ## 🌍 Country-Wise Sovereign ID Coverage & Validation Engines
+
+Coverage spans **109 Sovereign Jurisdictions across 9 Canonical Packs** (75+ with dedicated national ID checksums, plus universal coverage across 200+ countries for global financial and telecom formats):
 
 | Jurisdiction | Pack ID | Sovereign Identifiers Protected | Validation Algorithm / Engine |
 |---|---|---|---|

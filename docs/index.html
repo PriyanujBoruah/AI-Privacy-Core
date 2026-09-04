@@ -501,6 +501,57 @@
       word-break: break-all;
     }
 
+    /* SDG Expandable Accordions */
+    details.sdg-accordion {
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      overflow: hidden;
+      transition: all 0.2s ease;
+    }
+
+    details.sdg-accordion[open] {
+      border-color: #cbd5e1;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+    }
+
+    summary.sdg-summary {
+      padding: 16px 20px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      user-select: none;
+      list-style: none;
+      background: var(--bg-surface);
+      font-weight: 600;
+      transition: background 0.15s ease;
+    }
+
+    summary.sdg-summary::-webkit-details-marker {
+      display: none;
+    }
+
+    summary.sdg-summary:hover {
+      background: var(--bg-surface-elevated);
+    }
+
+    .accordion-chevron {
+      font-size: 11px;
+      color: var(--text-dim);
+      transition: transform 0.2s ease;
+    }
+
+    details.sdg-accordion[open] .accordion-chevron {
+      transform: rotate(180deg);
+    }
+
+    .sdg-content {
+      padding: 18px 24px 22px;
+      border-top: 1px solid var(--border);
+      background: #ffffff;
+    }
+
     /* Documentation Sections */
     .doc-section, .hero, .playground-section {
       margin-bottom: 60px;
@@ -798,33 +849,261 @@
     footer a:hover {
       color: #0284c7;
     }
+
+    /* Mobile Navigation Bar */
+    .mobile-nav-bar {
+      display: none;
+      background: var(--bg-surface);
+      border-bottom: 1px solid var(--border);
+      padding: 10px 16px;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 32px;
+      z-index: 95;
+    }
+
+    .mobile-brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      text-decoration: none;
+    }
+
+    .mobile-menu-btn {
+      background: #f1f5f9;
+      border: 1px solid #cbd5e1;
+      color: #0f172a;
+      padding: 6px 12px;
+      border-radius: 6px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.15s ease;
+    }
+
+    .mobile-menu-btn:hover {
+      background: #e2e8f0;
+    }
+
+    /* Mobile Backdrop */
+    .sidebar-backdrop {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 23, 42, 0.45);
+      backdrop-filter: blur(2px);
+      z-index: 98;
+    }
+
+    .sidebar-backdrop.active {
+      display: block;
+    }
+
+    /* Tablet and Mobile Responsive Breakpoints */
+    @media (max-width: 900px) {
+      .desktop-only {
+        display: none !important;
+      }
+
+      .mobile-nav-bar {
+        display: flex;
+      }
+
+      .sidebar {
+        transform: translateX(-100%);
+        transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+        z-index: 99;
+        top: 0;
+        height: 100vh;
+        width: min(300px, 85vw);
+        box-shadow: 4px 0 24px rgba(0, 0, 0, 0.15);
+      }
+
+      .sidebar.open {
+        transform: translateX(0);
+      }
+
+      .sidebar-close-btn {
+        display: flex !important;
+      }
+
+      .main-content {
+        margin-left: 0;
+        padding: 24px 16px 80px;
+        width: 100%;
+        max-width: 100%;
+        box-sizing: border-box;
+      }
+
+      .hero h1 {
+        font-size: 26px;
+        line-height: 1.25;
+      }
+
+      .hero p {
+        font-size: 14.5px;
+      }
+
+      .hero-meta {
+        gap: 8px;
+      }
+
+      .meta-pill {
+        width: 100%;
+        box-sizing: border-box;
+        justify-content: space-between;
+        font-size: 12px;
+        padding: 8px 12px;
+      }
+
+      #gatewayUrl {
+        word-break: break-all;
+        font-size: 11px;
+        text-align: right;
+        max-width: 65%;
+      }
+
+      .playground-section {
+        padding: 16px;
+        border-radius: 8px;
+        margin-bottom: 36px;
+      }
+
+      .playground-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+      }
+
+      .form-grid {
+        grid-template-columns: 1fr;
+        gap: 14px;
+      }
+
+      .playground-actions {
+        flex-direction: column;
+      }
+
+      .playground-actions .btn-primary,
+      .playground-actions .btn-secondary {
+        width: 100%;
+        justify-content: center;
+      }
+
+      .preset-btns {
+        overflow-x: auto;
+        flex-wrap: nowrap;
+        padding-bottom: 6px;
+        -webkit-overflow-scrolling: touch;
+      }
+
+      .btn-preset {
+        white-space: nowrap;
+        flex-shrink: 0;
+      }
+
+      .packs-grid {
+        grid-template-columns: 1fr !important;
+      }
+
+      .metric-cards-grid {
+        grid-template-columns: repeat(2, 1fr) !important;
+      }
+
+      .param-table th, .param-table td {
+        padding: 8px 10px;
+        font-size: 12px;
+      }
+
+      .code-display {
+        font-size: 11.5px;
+        padding: 12px;
+        max-height: 260px;
+      }
+
+      footer {
+        flex-direction: column;
+        gap: 12px;
+        text-align: center;
+        margin-top: 48px;
+      }
+    }
+
+    @media (max-width: 640px) {
+      .gov-banner {
+        height: 34px;
+        padding: 0 12px;
+        flex-direction: row;
+        align-items: center;
+        justify-content: space-between;
+        font-size: 11px;
+      }
+
+      .gov-banner .gov-contact-btn {
+        font-size: 10px;
+        padding: 2px 8px;
+        white-space: nowrap;
+        flex-shrink: 0;
+      }
+
+      .mobile-nav-bar {
+        top: 34px;
+      }
+
+      .metric-cards-grid {
+        grid-template-columns: 1fr !important;
+      }
+    }
   </style>
 </head>
 <body>
 
 <!-- Government Official Header Banner -->
 <div class="gov-banner">
-  <div style="display: flex; align-items: center; gap: 8px;">
+  <div style="display: flex; align-items: center; gap: 8px; min-width: 0;">
     <span class="gov-tag">Official</span>
-    <span>Open-Source Sovereign API Infrastructure • Privacy Core for Secure Global AI Usage</span>
+    <span style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">Open-Source Sovereign API Infrastructure<span class="desktop-only"> • Privacy Core for Secure Global AI Usage</span></span>
   </div>
   <a href="mailto:boruahpriyanuj2004@gmail.com?subject=AI%20Privacy%20Core%20Inquiry" class="gov-contact-btn">✉️ Contact Developer</a>
 </div>
 
+<!-- Mobile Navigation Header (Only visible on mobile screens <= 900px) -->
+<div class="mobile-nav-bar">
+  <div class="mobile-brand">
+    <div class="brand-logo" style="width: 28px; height: 28px; font-size: 14px;">🛡️</div>
+    <span style="font-weight: 700; font-size: 14px; color: #0f172a;">AI Privacy Core</span>
+    <span class="brand-badge" style="font-size: 9px; padding: 1px 5px;">v2.0.0</span>
+  </div>
+  <button id="mobileMenuBtn" class="mobile-menu-btn" aria-label="Toggle navigation menu" onclick="toggleMobileMenu()">
+    <span id="menuIcon">☰</span> Menu
+  </button>
+</div>
+
+<!-- Mobile Sidebar Backdrop Overlay -->
+<div id="sidebarBackdrop" class="sidebar-backdrop" onclick="toggleMobileMenu(false)"></div>
+
 <div class="app-container">
   <!-- Sidebar -->
   <aside class="sidebar">
-    <a href="#" class="brand">
-      <div class="brand-logo">🛡️</div>
-      <div class="brand-info">
-        <h1>AI Privacy Core</h1>
-        <span class="brand-badge">v2.0.0 API Docs</span>
-      </div>
-    </a>
+    <div style="display: flex; align-items: center; justify-content: space-between; padding: 0 4px;">
+      <a href="#" class="brand" style="padding: 0;">
+        <div class="brand-logo">🛡️</div>
+        <div class="brand-info">
+          <h1>AI Privacy Core</h1>
+          <span class="brand-badge">v2.0.0 API Docs</span>
+        </div>
+      </a>
+      <button class="sidebar-close-btn" style="display: none; background: #f1f5f9; border: 1px solid #cbd5e1; border-radius: 4px; width: 28px; height: 28px; align-items: center; justify-content: center; font-size: 14px; color: #475569; cursor: pointer;" onclick="toggleMobileMenu(false)" aria-label="Close menu">✕</button>
+    </div>
 
     <div class="nav-group">
       <div class="nav-heading">Getting Started</div>
       <a href="#overview" class="nav-item active">Overview</a>
+      <a href="#sustainable-development" class="nav-item">Sustainable Development</a>
       <a href="#playground" class="nav-item">Interactive Tester</a>
       <a href="#quickstart" class="nav-item">Quickstart Guide</a>
     </div>
@@ -901,6 +1180,229 @@
       </div>
     </header>
 
+    <!-- Open-Source Sustainable Development -->
+    <section class="doc-section" id="sustainable-development">
+      <h2 class="section-heading">🌱 Open-Source Sustainable Development</h2>
+      <div style="display: flex; flex-direction: column; gap: 20px; margin-top: 24px;">
+
+        <!-- SDG 3 -->
+        <details class="sdg-accordion" open>
+          <summary class="sdg-summary">
+            <div style="font-size: 15px; font-weight: 700; color: #059669; display: flex; align-items: center; gap: 8px;">
+              <span>🏥 SDG 3: Good Health and Well-Being</span>
+            </div>
+            <div style="display: flex; align-items: center; gap: 12px;">
+              <span style="background: #ecfdf5; color: #059669; border: 1px solid #a7f3d0; font-size: 11px; font-weight: 700; padding: 2px 8px; border-radius: 4px;">Health &amp; Life Sciences</span>
+              <span class="accordion-chevron">▼</span>
+            </div>
+          </summary>
+          <div class="sdg-content">
+            <div style="margin-bottom: 16px;">
+              <div style="font-size: 13.5px; font-weight: 700; color: var(--text); margin-bottom: 6px;">
+                Target 3.8: Universal Health Coverage &amp; Access to Quality Essential Healthcare Services
+              </div>
+              <ul style="margin-left: 20px; font-size: 13px; color: var(--text-muted); line-height: 1.7;">
+                <li><strong>Mechanism:</strong> Scans for and tokenizes Protected Health Information (PHI) - including Medical Record Numbers (MRN), National Prescriber Identifiers (NPI/DEA), clinical diagnostic codes, and healthcare beneficiary numbers (such as US Medicare MBI or Australian Medicare) - before diagnostic summaries, intake notes, or lab inquiries hit third-party LLMs.</li>
+                <li><strong>Impact:</strong> Enables public health facilities, clinical triage bots, and telemedicine providers to adopt frontier AI workflows while maintaining strict compliance with medical confidentiality mandates (such as HIPAA and national digital health data acts).</li>
+              </ul>
+            </div>
+
+            <div>
+              <div style="font-size: 13.5px; font-weight: 700; color: var(--text); margin-bottom: 6px;">
+                Target 3.d: Early Warning, Risk Reduction &amp; Management of National and Global Health Risks
+              </div>
+              <ul style="margin-left: 20px; font-size: 13px; color: var(--text-muted); line-height: 1.7;">
+                <li><strong>Mechanism:</strong> Allows researchers to feed raw clinical symptom sets and epidemiological case narratives through the engine, stripping personal patient indicators while preserving syntactic relationships and biomedical terminology.</li>
+                <li><strong>Impact:</strong> Unlocks multi-jurisdiction infectious disease modeling and collaborative public-health telemetry without risking cross-border patient data exfiltration or regulatory penalties.</li>
+              </ul>
+            </div>
+          </div>
+        </details>
+
+        <!-- SDG 8 -->
+        <details class="sdg-accordion">
+          <summary class="sdg-summary">
+            <div style="font-size: 15px; font-weight: 700; color: #b45309; display: flex; align-items: center; gap: 8px;">
+              <span>📈 SDG 8: Decent Work and Economic Growth</span>
+            </div>
+            <div style="display: flex; align-items: center; gap: 12px;">
+              <span style="background: #fef3c7; color: #b45309; border: 1px solid #fde68a; font-size: 11px; font-weight: 700; padding: 2px 8px; border-radius: 4px;">Financial Inclusion</span>
+              <span class="accordion-chevron">▼</span>
+            </div>
+          </summary>
+          <div class="sdg-content">
+            <div style="margin-bottom: 16px;">
+              <div style="font-size: 13.5px; font-weight: 700; color: var(--text); margin-bottom: 6px;">
+                Target 8.2: Higher Levels of Economic Productivity via Diversification and Technological Upgrading
+              </div>
+              <ul style="margin-left: 20px; font-size: 13px; color: var(--text-muted); line-height: 1.7;">
+                <li><strong>Mechanism:</strong> Provides a high-throughput, edge-native de-identification layer operating at sub-5ms latency, allowing developers to upgrade legacy backends to generative AI without expensive infrastructure redesigns.</li>
+                <li><strong>Impact:</strong> Eliminates compliance and latency bottlenecks for startups, digital agencies, and independent developers building AI-assisted enterprise tools.</li>
+              </ul>
+            </div>
+
+            <div>
+              <div style="font-size: 13.5px; font-weight: 700; color: var(--text); margin-bottom: 6px;">
+                Target 8.10: Strengthen Domestic Financial Institutions &amp; Universal Access to Banking/Financial Services
+              </div>
+              <ul style="margin-left: 20px; font-size: 13px; color: var(--text-muted); line-height: 1.7;">
+                <li><strong>Mechanism:</strong> Algorithmic Mod-10 (Luhn) card validation, Mod-97 (ISO 7064) IBAN validation, and domestic banking routing checks (e.g., US ABA, Indian IFSC, SEPA) neutralize financial identifiers before prompt transmission.</li>
+                <li><strong>Impact:</strong> Allows community banks, microfinance institutions, and emerging fintech scaleups to implement AI-driven fraud detection, invoice reconciliation, and customer support without violating PCI-DSS standards or enterprise audit requirements.</li>
+              </ul>
+            </div>
+          </div>
+        </details>
+
+        <!-- SDG 9 -->
+        <details class="sdg-accordion">
+          <summary class="sdg-summary">
+            <div style="font-size: 15px; font-weight: 700; color: #c2410c; display: flex; align-items: center; gap: 8px;">
+              <span>🏭 SDG 9: Industry, Innovation, and Infrastructure</span>
+            </div>
+            <div style="display: flex; align-items: center; gap: 12px;">
+              <span style="background: #ffedd5; color: #c2410c; border: 1px solid #fed7aa; font-size: 11px; font-weight: 700; padding: 2px 8px; border-radius: 4px;">Digital Infrastructure</span>
+              <span class="accordion-chevron">▼</span>
+            </div>
+          </summary>
+          <div class="sdg-content">
+            <div style="margin-bottom: 16px;">
+              <div style="font-size: 13.5px; font-weight: 700; color: var(--text); margin-bottom: 6px;">
+                Target 9.c: Significantly Increase Access to Information and Communications Technology
+              </div>
+              <ul style="margin-left: 20px; font-size: 13px; color: var(--text-muted); line-height: 1.7;">
+                <li><strong>Mechanism:</strong> Operates statelessly inside serverless edge isolates (such as Cloudflare Workers) without requiring multi-gigabyte machine learning models, dedicated GPU hardware, or heavy container runtimes.</li>
+                <li><strong>Impact:</strong> Democratizes enterprise-grade privacy protection for developers in bandwidth-constrained and low-compute environments, preventing citizen data extraction as global internet adoption expands.</li>
+              </ul>
+            </div>
+
+            <div>
+              <div style="font-size: 13.5px; font-weight: 700; color: var(--text); margin-bottom: 6px;">
+                Target 9.5: Upgrade Technological Capabilities &amp; Encourage Domestic Innovation
+              </div>
+              <ul style="margin-left: 20px; font-size: 13px; color: var(--text-muted); line-height: 1.7;">
+                <li><strong>Mechanism:</strong> Open-sources 67 mathematical checksum algorithms, AST pattern extractors, and reversible state-machine logic under the permissive Apache-2.0 license.</li>
+                <li><strong>Impact:</strong> Supplies foundational, transparent Digital Public Infrastructure (DPI) that universities, sovereign research teams, and local engineering ecosystems can independently inspect, adapt, and run without vendor lock-in.</li>
+              </ul>
+            </div>
+          </div>
+        </details>
+
+        <!-- SDG 10 -->
+        <details class="sdg-accordion">
+          <summary class="sdg-summary">
+            <div style="font-size: 15px; font-weight: 700; color: #be185d; display: flex; align-items: center; gap: 8px;">
+              <span>⚖️ SDG 10: Reduced Inequalities</span>
+            </div>
+            <div style="display: flex; align-items: center; gap: 12px;">
+              <span style="background: #fce7f3; color: #be185d; border: 1px solid #fbcfe8; font-size: 11px; font-weight: 700; padding: 2px 8px; border-radius: 4px;">Global South Parity</span>
+              <span class="accordion-chevron">▼</span>
+            </div>
+          </summary>
+          <div class="sdg-content">
+            <div style="margin-bottom: 16px;">
+              <div style="font-size: 13.5px; font-weight: 700; color: var(--text); margin-bottom: 6px;">
+                Target 10.2: Empower and Promote Social, Economic, and Political Inclusion of All
+              </div>
+              <ul style="margin-left: 20px; font-size: 13px; color: var(--text-muted); line-height: 1.7;">
+                <li><strong>Mechanism:</strong> Provides 185 sovereign identity and tax pattern checks covering 109 countries across 9 Canonical Packs, delivering out-of-the-box parity for nations across ASEAN, Africa, Latin America, and South Asia.</li>
+                <li><strong>Impact:</strong> Counteracts the systemic bias of legacy DLP tools that prioritize Western formats (US SSN, EU VAT) while neglecting Global South citizen identifiers.</li>
+              </ul>
+            </div>
+
+            <div>
+              <div style="font-size: 13.5px; font-weight: 700; color: var(--text); margin-bottom: 6px;">
+                Target 10.3: Ensure Equal Opportunity and Reduce Inequalities of Outcome
+              </div>
+              <ul style="margin-left: 20px; font-size: 13px; color: var(--text-muted); line-height: 1.7;">
+                <li><strong>Mechanism:</strong> Distributes sovereign data privacy infrastructure at zero cost under an open standard, eliminating the multi-thousand-dollar licensing barriers imposed by legacy enterprise cybersecurity monopolies.</li>
+                <li><strong>Impact:</strong> Levels the competitive playing field for developers and public entities in emerging economies, enabling them to build sovereign, privacy-compliant AI systems with the same security assurances as multinational tech firms.</li>
+              </ul>
+            </div>
+          </div>
+        </details>
+
+        <!-- SDG 16 -->
+        <details class="sdg-accordion">
+          <summary class="sdg-summary">
+            <div style="font-size: 15px; font-weight: 700; color: #0284c7; display: flex; align-items: center; gap: 8px;">
+              <span>🕊️ SDG 16: Peace, Justice, and Strong Institutions</span>
+            </div>
+            <div style="display: flex; align-items: center; gap: 12px;">
+              <span style="background: #e0f2fe; color: #0284c7; border: 1px solid #bae6fd; font-size: 11px; font-weight: 700; padding: 2px 8px; border-radius: 4px;">Public Registry Defense</span>
+              <span class="accordion-chevron">▼</span>
+            </div>
+          </summary>
+          <div class="sdg-content">
+            <div style="margin-bottom: 16px;">
+              <div style="font-size: 13.5px; font-weight: 700; color: var(--text); margin-bottom: 6px;">
+                Target 16.9: Legal Identity for All &amp; Protection of Civil Identity Registries
+              </div>
+              <ul style="margin-left: 20px; font-size: 13px; color: var(--text-muted); line-height: 1.7;">
+                <li><strong>Mechanism:</strong> Intercepts civil registration codes, national voter indices, and foundational citizen identification numbers across 75+ sovereign jurisdictions, replacing them with deterministic surrogates prior to third-party model ingestion.</li>
+                <li><strong>Impact:</strong> Prevents national digital legal identities from leaking into commercial LLM training corpora, operational telemetry, or vector embeddings, defending public registry infrastructure against bulk surveillance and automated identity theft.</li>
+              </ul>
+            </div>
+
+            <div>
+              <div style="font-size: 13.5px; font-weight: 700; color: var(--text); margin-bottom: 6px;">
+                Target 16.10: Public Access to Information and Protection of Fundamental Freedoms
+              </div>
+              <ul style="margin-left: 20px; font-size: 13px; color: var(--text-muted); line-height: 1.7;">
+                <li><strong>Mechanism:</strong> Enforces cryptographic zero-retention through automated session destruction (<code>purgeAfterRead</code>) and client-side encryption options, preventing edge nodes or intermediaries from persisting raw logs.</li>
+                <li><strong>Impact:</strong> Upholds the fundamental human right to digital privacy (UN Universal Declaration of Human Rights, Article 12). Public agencies, investigative journalists, and legal researchers can analyze sensitive public policy or whistleblower submissions via frontier AI without compromising sources or institutional confidentiality.</li>
+              </ul>
+            </div>
+          </div>
+        </details>
+
+      </div>
+
+      <div style="background: var(--bg-surface); border: 1px solid var(--border); border-radius: 8px; overflow-x: auto; margin-top: 32px;">
+        <table class="param-table" style="margin: 0;">
+          <thead>
+            <tr>
+              <th style="width: 12%;">UN SDG</th>
+              <th style="width: 14%;">Target Focus</th>
+              <th style="width: 37%;">Core Engine Mechanism</th>
+              <th style="width: 37%;">Practical Impact</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong style="color: #059669;">SDG 3</strong></td>
+              <td><code>3.8, 3.d</code></td>
+              <td>Intercepts PHI, MRN, NPI, and clinical identifiers before model ingress.</td>
+              <td>Enables HIPAA-compliant clinical AI adoption and cross-border research.</td>
+            </tr>
+            <tr>
+              <td><strong style="color: #b45309;">SDG 8</strong></td>
+              <td><code>8.2, 8.10</code></td>
+              <td>Checksum validation for PCI-DSS cards, IBANs, and banking codes.</td>
+              <td>Lowers regulatory compliance barriers for early-stage fintechs and banks.</td>
+            </tr>
+            <tr>
+              <td><strong style="color: #c2410c;">SDG 9</strong></td>
+              <td><code>9.c, 9.5</code></td>
+              <td>Stateless sub-5ms edge isolate runtime; Apache-2.0 open-source release.</td>
+              <td>Delivers open Digital Public Infrastructure (DPI) without GPU/cloud lock-in.</td>
+            </tr>
+            <tr>
+              <td><strong style="color: #be185d;">SDG 10</strong></td>
+              <td><code>10.2, 10.3</code></td>
+              <td>185 rules across 109 countries covering ASEAN, Africa, and Latin America.</td>
+              <td>Eliminates Global South exclusion inherent in Western-centric legacy DLP tools.</td>
+            </tr>
+            <tr>
+              <td><strong style="color: #0284c7;">SDG 16</strong></td>
+              <td><code>16.9, 16.10</code></td>
+              <td>Reversible masking of sovereign IDs with cryptographic zero-retention (<code>purgeAfterRead</code>).</td>
+              <td>Protects national identity registries and defends privacy under UN Article 12.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
     <!-- Interactive Playground -->
     <section class="playground-section" id="playground">
       <div class="playground-header">
@@ -914,7 +1416,7 @@
         <button class="btn-preset" onclick="loadPreset('asia')">Asia (Aadhaar, PAN, Japan)</button>
         <button class="btn-preset" onclick="loadPreset('asean')">Southeast Asia (NRIC, MyKad)</button>
         <button class="btn-preset" onclick="loadPreset('eu')">EU (Spain DNI, Italy CF)</button>
-        <button class="btn-preset" onclick="loadPreset('fpe')">FPE Synthetic Mock</button>
+        <button class="btn-preset" onclick="loadPreset('africa')">Africa (South Africa, Kenya, Egypt)</button>
       </div>
 
       <div class="form-grid">
@@ -1024,8 +1526,18 @@ print("Session ID :", response["sessionId"])
     <section class="doc-section" id="endpoint-tokenize">
       <h2 class="section-heading">Endpoint: De-identification (Tokenize)</h2>
       <p class="section-desc">
-        Parses text, executes sovereign checksum validators, masks sensitive entities with surrogate tokens, and stores encrypted mapping in Cloudflare D1.
+        Parses prompt text, executes sovereign mathematical checksum validators, and replaces sensitive entities with surrogate tokens. Supports <strong>ephemeral in-memory RAM storage (zero disk writes)</strong> as well as optional persistent storage via Cloudflare D1.
       </p>
+
+      <!-- Enterprise Security & Storage Architecture Callout -->
+      <div style="background: #ffffff; border: 1px solid #cbd5e1; border-left: 4px solid #0284c7; border-radius: 6px; padding: 14px 18px; margin: 18px 0 24px; font-size: 13px; color: #334155; line-height: 1.6;">
+        <div style="font-weight: 700; color: #0f172a; margin-bottom: 4px; display: flex; align-items: center; gap: 6px;">
+          <span>🔒 Enterprise Security &amp; Storage Architecture</span>
+        </div>
+        <div>
+          <strong>Is Cloudflare D1 required?</strong> No. Self-hosted deployments run in a <strong>100% ephemeral in-memory state</strong> by default. When <code>DB</code> is unbound, session mappings reside purely in volatile RAM with automatic TTL eviction and zero disk persistence. For multi-datacenter global isolates, Cloudflare D1 (or Redis/PostgreSQL) can be optionally bound. Setting <code>"purgeAfterRead": true</code> on detokenize ensures instant cryptographic memory destruction upon first read.
+        </div>
+      </div>
 
       <div class="endpoint-card">
         <div class="endpoint-card-header">
@@ -1101,6 +1613,17 @@ print("Session ID :", response["sessionId"])
         Rehydrates tokenized output generated by an LLM back into original sensitive values using the session vault.
       </p>
 
+      <!-- Zero Data Retention (ZDR) Enforced Callout -->
+      <div style="background: #ffffff; border: 1px solid #cbd5e1; border-left: 4px solid #059669; border-radius: 6px; padding: 14px 18px; margin: 18px 0 24px; font-size: 13px; color: #334155; line-height: 1.6;">
+        <div style="font-weight: 700; color: #0f172a; margin-bottom: 4px; display: flex; align-items: center; gap: 8px;">
+          <span style="background: #ecfdf5; color: #059669; border: 1px solid #a7f3d0; font-size: 10.5px; font-weight: 800; padding: 2px 8px; border-radius: 4px; text-transform: uppercase; letter-spacing: 0.5px;">ZDR Enforced</span>
+          <span>Zero Data Retention (ZDR) - Enterprise Compliance Guarantee</span>
+        </div>
+        <div>
+          By setting <code>"purgeAfterRead": true</code>, the engine enforces <strong>Zero Data Retention (ZDR)</strong>. The session token mapping is instantly, cryptographically obliterated from volatile RAM and D1 SQL the exact microsecond it is read. Subsequent attempts to rehydrate using that <code>sessionId</code> fail with <code>404 session_expired_error</code>. This architecture satisfies stringent <strong>Enterprise CISO zero-retention mandates</strong>, GDPR Art. 17 (Right to Erasure), and SOC 2 Type II trust criteria.
+        </div>
+      </div>
+
       <div class="endpoint-card">
         <div class="endpoint-card-header">
           <span class="http-method post">POST</span>
@@ -1131,18 +1654,20 @@ print("Session ID :", response["sessionId"])
               <tr>
                 <td><span class="param-name">purgeAfterRead</span><span class="param-optional">optional</span></td>
                 <td><span class="param-type">boolean</span></td>
-                <td>If <code>true</code>, permanently destroys session from vault immediately on read.</td>
+                <td>
+                  <strong>Zero Data Retention (ZDR) Flag</strong>: When set to <code>true</code>, permanently destroys the session mapping immediately upon read. Returns <code>"sessionStatus": "purged"</code>. Default: <code>false</code>.
+                </td>
               </tr>
             </tbody>
           </table>
 
-          <h4 style="font-size: 14px; margin: 20px 0 8px;">Response (200 OK)</h4>
+          <h4 style="font-size: 14px; margin: 20px 0 8px;">Response with ZDR Enforced (200 OK)</h4>
           <div class="code-tabs">
             <div class="tab-content">
 {
   "rehydratedText": "Transfer USD 5,000 for Contact Alice Wong (email: alice@fintech.io) with Visa 4532-0151-1283-0366",
   "tokensResolved": 3,
-  "sessionStatus": "active"
+  "sessionStatus": "purged"
 }
             </div>
           </div>
@@ -1271,7 +1796,7 @@ print("Session ID :", response["sessionId"])
       </p>
 
       <!-- Metric Pills -->
-      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin: 24px 0 32px;">
+      <div class="metric-cards-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin: 24px 0 32px;">
         <div style="background: var(--bg-surface); border: 1px solid var(--border); border-radius: 8px; padding: 18px; text-align: center;">
           <div style="font-size: 32px; font-weight: 800; color: var(--primary);">75+</div>
           <div style="font-size: 13px; color: var(--text-muted); margin-top: 4px;">Sovereign Nations Protected</div>
@@ -1798,10 +2323,10 @@ print("Session ID :", response["sessionId"])
       category: "european_union",
       mode: "structural"
     },
-    fpe: {
-      text: "Developer Contact Alex Vance with email alex.vance@techcorp.internal and card 4532-0151-1283-0366 submitted invoice #INV-9055.",
-      category: "global",
-      mode: "fpe"
+    africa: {
+      text: "Patient Contact Amara Diallo holds South Africa ID 8001015009087 and Kenya KRA PIN A123456789Z alongside Egypt ID 29001010101234.",
+      category: "africa",
+      mode: "structural"
     }
   };
 
@@ -1911,6 +2436,28 @@ print("Session ID :", response["sessionId"])
     }
   }
 
+  // Mobile Off-Canvas Navigation Drawer Toggle
+  function toggleMobileMenu(forceState) {
+    const sidebar = document.querySelector('.sidebar');
+    const backdrop = document.getElementById('sidebarBackdrop');
+    const menuBtn = document.getElementById('mobileMenuBtn');
+    if (!sidebar || !backdrop) return;
+
+    const isOpen = typeof forceState === 'boolean' ? forceState : !sidebar.classList.contains('open');
+
+    if (isOpen) {
+      sidebar.classList.add('open');
+      backdrop.classList.add('active');
+      document.body.style.overflow = 'hidden';
+      if (menuBtn) menuBtn.innerHTML = '<span>✕</span> Close';
+    } else {
+      sidebar.classList.remove('open');
+      backdrop.classList.remove('active');
+      document.body.style.overflow = '';
+      if (menuBtn) menuBtn.innerHTML = '<span id="menuIcon">☰</span> Menu';
+    }
+  }
+
   // Smooth scroll for internal links without triggering Chromium file:// hash reloads
   document.querySelectorAll('a[href^="#"]').forEach(anchor => {
     anchor.addEventListener('click', function (e) {
@@ -1923,6 +2470,11 @@ print("Session ID :", response["sessionId"])
         // Update active class in sidebar
         document.querySelectorAll('.sidebar .nav-item').forEach(el => el.classList.remove('active'));
         this.classList.add('active');
+
+        // Automatically close mobile menu upon link selection
+        if (window.innerWidth <= 900) {
+          toggleMobileMenu(false);
+        }
       }
     });
   });

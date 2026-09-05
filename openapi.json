@@ -5,7 +5,7 @@
     "description": "High-performance open-source utility for real-time PII de-identification, format-preserving masking, and reversible tokenization.",
     "version": "2.0.0",
     "license": {
-      "name": "MIT",
+      "name": "Apache-2.0",
       "url": "https://opensource.org/licenses/MIT"
     }
   },

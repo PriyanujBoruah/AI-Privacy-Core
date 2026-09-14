@@ -76,7 +76,7 @@ export const SOUTH_AMERICA_RULES: Rule[] = [
     id: "RULE_CO_CC",
     type: "GOV_ID_CO_CC",
     category: "south_america",
-    pattern: /(?:^|\s)(?:CC|Cédula):?\s?(\d{6,10})\b/gi,
+    pattern: /(?:^|\s)(?:(?:Cédula:?\s*|CC[:.]\s*|CC\s+)(\d{6,10})|(CC\d{6,10}))\b/gi,
     tokenPrefix: "CO_CC",
   },
 

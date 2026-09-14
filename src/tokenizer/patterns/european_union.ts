@@ -331,7 +331,7 @@ export const EUROPEAN_UNION_RULES: Rule[] = [
     id: "RULE_MT_ID",
     type: "GOV_ID_MT_ID",
     category: "european_union",
-    pattern: /\b\d{1,7}[MGLHABZ]\b/gi,
+    pattern: /(?<![:\w])\d{1,7}[MGLHABZ](?![:\w])/gi,
     tokenPrefix: "MT_ID",
   },
 ];

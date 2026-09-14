@@ -1,5 +1,11 @@
 import { Rule } from "./types";
-import { passesLuhnChecksum, validateIBAN } from "../validators/global";
+import {
+  passesLuhnChecksum,
+  validateIBAN,
+  validateHandleUsername,
+  validateSwiftBIC,
+  validateUniversalContextId,
+} from "../validators/global";
 
 export const GLOBAL_RULES: Rule[] = [
   {
@@ -13,14 +19,14 @@ export const GLOBAL_RULES: Rule[] = [
     id: "RULE_EMAIL",
     type: "PII_EMAIL",
     category: "global",
-    pattern: /\b[A-Za-z0-9._%+-]{1,64}@[A-Za-z0-9.-]{1,255}\.[A-Za-z]{2,10}\b/g,
+    pattern: /(?<![A-Za-z0-9._%+-])[A-Za-z0-9._%+-]{1,256}@[A-Za-z0-9.-]{1,255}\.[A-Za-z]{2,10}\b/g,
     tokenPrefix: "EMAIL",
   },
   {
     id: "RULE_PHONE",
     type: "PII_PHONE",
     category: "global",
-    pattern: /(?<!\d)(?:\+\d{1,3}[-.\s]?)?\(?\d{3}\)?[-.\s]?\d{3}[-.\s]?\d{4}\b/g,
+    pattern: /(?<![A-Za-z0-9])(?:\+\d{1,3}[-.\s]?)?\(?\d{3}\)?[-.\s]?\d{3}[-.\s]?\d{4}\b/g,
     tokenPrefix: "PHONE",
   },
   {
@@ -45,6 +51,7 @@ export const GLOBAL_RULES: Rule[] = [
     category: "global",
     pattern: /\b[A-Z]{6}[A-Z0-9]{2}(?:[A-Z0-9]{3})?\b/g,
     tokenPrefix: "SWIFT",
+    validator: (code) => validateSwiftBIC(code),
   },
   {
     id: "RULE_CRYPTO_BTC",
@@ -78,14 +85,75 @@ export const GLOBAL_RULES: Rule[] = [
     id: "RULE_INVOICE",
     type: "FIN_INVOICE",
     category: "global",
-    pattern: /#?(?:INV|ORD|ACC|TIC|CASE|MRN)-\d{3,10}\b/gi,
+    pattern: /(?<![A-Za-z0-9])#?(?:INV|ORD|ACC|TIC|CASE|MRN)-\d{3,10}\b/gi,
     tokenPrefix: "INVOICE",
   },
   {
     id: "RULE_CONTEXT_NAME",
     type: "PII_NAME",
     category: "global",
-    pattern: /(?:^|[\s"'])(?:Customer|Patient|User|Client|Contact|Dear|Name:|Mr\.|Mrs\.|Ms\.|Dr\.)\s+([A-Z\u00C0-\u00DD\u4E00-\u9FFF\u0600-\u06FF\u0900-\u097F][a-z\u00DE-\u024F\u4E00-\u9FFF\u0600-\u06FF\u0900-\u097F]{1,30}(?:\s+[A-Z\u00C0-\u00DD\u4E00-\u9FFF\u0600-\u06FF\u0900-\u097F][a-z\u00DE-\u024F\u4E00-\u9FFF\u0600-\u06FF\u0900-\u097F]{1,30}){0,2})/gu,
+    pattern: /(?:^|[\s"'])(?<!(?:Product|Expense|Report|File|Table|Group|Domain|Brand|Field|Class|Server|Database|Host|Folder|Project|Item|Device|Model|App|Application|Service)\s+)(?:Customer|Patient|User|Client|Contact|Dear|Name:|Mr\.|Mrs\.|Ms\.|Dr\.)\s+([A-Z\u00C0-\u00DD\u4E00-\u9FFF\u0600-\u06FF\u0900-\u097F][a-zA-Z'\u00DE-\u024F\u4E00-\u9FFF\u0600-\u06FF\u0900-\u097F]{1,30}\b(?:\s+[A-Z\u00C0-\u00DD\u4E00-\u9FFF\u0600-\u06FF\u0900-\u097F][a-zA-Z'\u00DE-\u024F\u4E00-\u9FFF\u0600-\u06FF\u0900-\u097F]{1,30}\b){0,2})(?![A-Za-z0-9_])/gu,
     tokenPrefix: "PERSON",
+  },
+  {
+    id: "RULE_HANDLE_USERNAME",
+    type: "PII_USERNAME",
+    category: "global",
+    pattern: /(?<![\w@.-])@[a-zA-Z0-9_]{1,30}\b/g,
+    tokenPrefix: "USERNAME",
+    validator: (handleStr) => validateHandleUsername(handleStr),
+  },
+  {
+    id: "RULE_CONTEXT_USERNAME",
+    type: "PII_USERNAME",
+    category: "global",
+    pattern: /(?:^|[\s"'])(?:username|user\s*name|user_name|user|handle|login|screen\s*name)\s*[:=]\s*([a-zA-Z0-9_.-]{3,30})\b/gi,
+    tokenPrefix: "USERNAME",
+  },
+  // =========================================================================
+  // UNIVERSAL FALLBACK CHECKERS (Lowest Priority Tier 0, Priority = 1)
+  // Scans for generic IDs, UUIDs, tracking numbers, hardware MACs, and tokens
+  // when not captured by higher-priority sovereign or canonical rules.
+  // =========================================================================
+  {
+    id: "RULE_UNIVERSAL_UUID",
+    type: "UNIVERSAL_UUID",
+    category: "global",
+    pattern: /\b[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}\b/g,
+    tokenPrefix: "UUID",
+    priority: 1,
+  },
+  {
+    id: "RULE_UNIVERSAL_CONTEXT_ID",
+    type: "UNIVERSAL_ID",
+    category: "global",
+    pattern: /(?:^|[\s"'])(?:(?:national|citizen|gov(?:ernment)?|tax|voter|account|customer|client|patient|user|member|employee|student|order|transaction|tracking|ref(?:erence)?|device)\s*id|id\s*number|id\s*#|identification\s*(?:no|number)|id)\s*[:=]\s*([A-Za-z0-9_-]{4,128})(?![-A-Za-z0-9_])/gi,
+    tokenPrefix: "ID",
+    validator: (idStr) => validateUniversalContextId(idStr),
+    priority: 1,
+  },
+  {
+    id: "RULE_UNIVERSAL_TRACKING",
+    type: "UNIVERSAL_TRACKING",
+    category: "global",
+    pattern: /\b1Z[0-9A-Za-z]{16}\b/g,
+    tokenPrefix: "TRACKING",
+    priority: 1,
+  },
+  {
+    id: "RULE_UNIVERSAL_MAC_ADDRESS",
+    type: "UNIVERSAL_MAC",
+    category: "global",
+    pattern: /\b(?:[0-9A-Fa-f]{2}[:-]){5}[0-9A-Fa-f]{2}\b/g,
+    tokenPrefix: "MAC",
+    priority: 1,
+  },
+  {
+    id: "RULE_UNIVERSAL_AUTH_TOKEN",
+    type: "UNIVERSAL_TOKEN",
+    category: "global",
+    pattern: /(?:^|[\s"'])(?:bearer\s+|access_token\s*[:=]\s*|auth_token\s*[:=]\s*|api_secret\s*[:=]\s*)([A-Za-z0-9._~+/-]{20,80})\b/gi,
+    tokenPrefix: "TOKEN",
+    priority: 1,
   },
 ];

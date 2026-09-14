@@ -136,7 +136,7 @@ export const ASIA_NON_SEA_RULES: Rule[] = [
     id: "RULE_HK_HKID",
     type: "GOV_ID_HKID",
     category: "asia_non_sea",
-    pattern: /\b[A-Z]{1,2}\d{6}(?:\([0-9A]\)|[0-9A]\b)/gi,
+    pattern: /\b[A-Z]{1,2}\d{6}(?:\([0-9A]\)|[0-9A])(?![A-Za-z0-9-])/gi,
     tokenPrefix: "HKID",
     validator: (hkid) => validateHongKongHKID(hkid),
   },

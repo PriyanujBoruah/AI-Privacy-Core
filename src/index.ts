@@ -23,7 +23,7 @@ app.use(
   })
 );
 
-app.options("*", (c) => c.text("", 204));
+app.options("*", (c) => c.body(null, 204));
 
 // Mount Data De-identification & Reversible Tokenization Engine on /v1
 app.route("/v1", tokenizationApp);

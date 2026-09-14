@@ -57,9 +57,9 @@ for (const rule of ENTERPRISE_RULESET) {
 export const MAX_ALLOWED_CATEGORIES = 2;
 
 /**
- * Resolves requested Canonical Pack IDs into a deduplicated, bounded Rule list.
+ * Resolves requested Canonical Pack IDs into a deduplicated Rule list.
  * Always includes 'global' baseline rules.
- * Strictly limited to a maximum of 2 Canonical Pack IDs per request.
+ * Supports 'all' to activate all Canonical Regional Packs simultaneously.
  */
 export function resolveActiveRules(categories?: string[]): {
   rules: Rule[];
@@ -68,11 +68,16 @@ export function resolveActiveRules(categories?: string[]): {
 } {
   const requested = !categories || categories.length === 0 ? [] : categories;
 
-  if (requested.length > MAX_ALLOWED_CATEGORIES) {
+  const isAll = requested.some((r) => {
+    const s = r.toLowerCase().trim();
+    return s === "all" || s === "*";
+  });
+
+  if (isAll) {
+    const allPacks = Array.from(CANONICAL_PACK_IDS) as CanonicalCategory[];
     return {
-      rules: [],
-      resolvedPacks: [],
-      error: `Maximum of ${MAX_ALLOWED_CATEGORIES} Canonical Pack IDs allowed per request to maintain sub-5ms SLA. Received ${requested.length}.`,
+      rules: ENTERPRISE_RULESET,
+      resolvedPacks: allPacks,
     };
   }
 
@@ -86,7 +91,7 @@ export function resolveActiveRules(categories?: string[]): {
       return {
         rules: [],
         resolvedPacks: [],
-        error: `Invalid pack ID '${raw}'. The API only accepts Canonical Pack IDs (max 2): south_east_asia, asia_non_sea, north_america, south_america, european_union, europe_non_eu, africa, oceania, corporate, global.`,
+        error: `Invalid pack ID '${raw}'. The API accepts Canonical Pack IDs (e.g. all, south_east_asia, asia_non_sea, north_america, south_america, european_union, europe_non_eu, africa, oceania, corporate, global).`,
       };
     }
     canonicalSet.add(canonical);

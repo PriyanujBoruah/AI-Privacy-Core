@@ -81,18 +81,6 @@ tokenizationApp.post("/tokenize", async (c) => {
     }
 
     const categories = resolveCategories(c, body.categories);
-    if (categories.length > 2) {
-      return c.json(
-        {
-          error: {
-            type: "category_limit_exceeded",
-            message: "Maximum of 2 Canonical Pack IDs allowed per request to maintain sub-5ms SLA.",
-          },
-        },
-        400
-      );
-    }
-
     const ttlSeconds = body.ttlSeconds && body.ttlSeconds > 0 ? Math.min(body.ttlSeconds, 86400) : 300;
     const headerKeywords = resolveCustomKeywords(c);
     const combinedKeywords = Array.from(
@@ -109,11 +97,19 @@ tokenizationApp.post("/tokenize", async (c) => {
     });
     const sessionId = `sess_tok_${Math.random().toString(36).substring(2, 12)}`;
 
+    let executionCtx;
+    try {
+      executionCtx = c.executionCtx;
+    } catch {
+      // In unit tests or runtimes without execution context
+    }
+
     const expiresAt = await saveTokenSession(
       c.env?.DB,
       sessionId,
       tokenResult.tokenMap,
-      ttlSeconds
+      ttlSeconds,
+      executionCtx
     );
 
     return c.json({
@@ -177,7 +173,13 @@ tokenizationApp.post("/detokenize", async (c) => {
 
     let sessionStatus = "active";
     if (body.purgeAfterRead === true) {
-      await purgeTokenSession(c.env?.DB, body.sessionId);
+      let executionCtx;
+      try {
+        executionCtx = c.executionCtx;
+      } catch {
+        // No ExecutionContext in test environment
+      }
+      await purgeTokenSession(c.env?.DB, body.sessionId, executionCtx);
       sessionStatus = "purged";
     }
 

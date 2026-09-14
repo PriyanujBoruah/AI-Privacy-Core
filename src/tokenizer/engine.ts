@@ -81,17 +81,23 @@ export function tokenize(
   // =========================================================================
 
   for (const rule of activeRules) {
-    const regex = new RegExp(rule.pattern.source, rule.pattern.flags);
+    rule.pattern.lastIndex = 0;
     let match: RegExpExecArray | null;
 
-    while ((match = regex.exec(text)) !== null) {
+    while ((match = rule.pattern.exec(text)) !== null) {
       const fullMatchedText = match[0];
-      const targetValue = match[1] || fullMatchedText;
+      let targetValue = fullMatchedText;
+      for (let i = 1; i < match.length; i++) {
+        if (match[i] !== undefined) {
+          targetValue = match[i];
+          break;
+        }
+      }
 
       // Calculate exact start/end indices for extracted capture group
       let start = match.index;
-      if (match[1]) {
-        start = match.index + fullMatchedText.indexOf(match[1]);
+      if (targetValue !== fullMatchedText) {
+        start = match.index + fullMatchedText.indexOf(targetValue);
       }
       const end = start + targetValue.length;
 
@@ -106,6 +112,9 @@ export function tokenize(
         priority = 20; // Tier 2 Checksums (All verified algorithmic IDs)
       } else if (rule.id.startsWith("RULE_CONTEXT_NAME") || rule.id.startsWith("RULE_INVOICE") || match[1]) {
         priority = 15; // Tier 3 Contextual Anchors
+      }
+      if (rule.priority !== undefined) {
+        priority = rule.priority;
       }
 
       rawSpans.push({
@@ -142,40 +151,25 @@ export function tokenize(
   }
 
   // =========================================================================
-  // STEP 2: SPAN DISAMBIGUATION PIPELINE (Longest-Match & Priority Sorting)
+  // STEP 2: SPAN DISAMBIGUATION PIPELINE (Priority-First & Longest-Match Sorting)
+  // Higher-priority rules claim spans first; bottom-priority fallback rules (priority 1)
+  // only fill in unclaimed spans and can never preempt existing pattern checkers.
   // =========================================================================
   rawSpans.sort((a, b) => {
-    if (a.start !== b.start) return a.start - b.start;
+    if (b.priority !== a.priority) return b.priority - a.priority; // Higher priority score wins first
     const lenA = a.end - a.start;
     const lenB = b.end - b.start;
-    if (lenA !== lenB) return lenB - lenA; // Longest length wins
-    return b.priority - a.priority;       // Higher priority score wins
+    if (lenA !== lenB) return lenB - lenA;                         // Longest length wins
+    return a.start - b.start;                                      // Earlier occurrence wins
   });
 
   const winningSpans: MatchSpan[] = [];
 
   for (const span of rawSpans) {
-    let hasConflict = false;
-
-    for (let i = 0; i < winningSpans.length; i++) {
-      const existing = winningSpans[i];
-
-      // Overlap check
-      if (span.start < existing.end && span.end > existing.start) {
-        hasConflict = true;
-
-        const spanLen = span.end - span.start;
-        const existingLen = existing.end - existing.start;
-
-        if (
-          span.priority > existing.priority ||
-          (span.priority === existing.priority && spanLen > existingLen)
-        ) {
-          winningSpans[i] = span;
-        }
-        break;
-      }
-    }
+    // Check if this candidate span overlaps with any already-accepted higher/equal priority span
+    const hasConflict = winningSpans.some(
+      (existing) => span.start < existing.end && span.end > existing.start
+    );
 
     if (!hasConflict) {
       winningSpans.push(span);
@@ -228,12 +222,16 @@ export function tokenize(
     return { ...span, syntheticToken };
   });
 
-  // Coreference mention propagation: scan for un-captured repeated mentions of assigned entity names
+  // Coreference mention propagation: scan for un-captured repeated mentions of assigned person names
   for (const [targetVal, syntheticToken] of valueToTokenMap.entries()) {
-    // Only propagate name entities with length > 2
-    if (targetVal.length > 2 && /^[A-Z\u00C0-\u00DD\u4E00-\u9FFF]/.test(targetVal)) {
+    // Only propagate PERSON entities with length > 2
+    if (
+      syntheticToken.startsWith("PERSON") &&
+      targetVal.length > 2 &&
+      /^[A-Z\u00C0-\u00DD\u4E00-\u9FFF]/.test(targetVal)
+    ) {
       const escapedVal = targetVal.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-      const nameRegex = new RegExp(`(?<![A-Za-z0-9_])${escapedVal}(?![A-Za-z0-9_])`, "gi");
+      const nameRegex = new RegExp(`(?<![A-Za-z0-9_])${escapedVal}(?![A-Za-z0-9_])`, "g");
       let nMatch: RegExpExecArray | null;
 
       while ((nMatch = nameRegex.exec(text)) !== null) {
@@ -303,28 +301,25 @@ export function rehydrate(
   );
 
   for (const [token, originalValue] of sortedTokens) {
+    const isExplicitlyBracketed = token.startsWith("<") && token.endsWith(">");
     const rawToken = token.replace(/^<|>$/g, "");
     const escapedToken = rawToken.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 
-    // 1. Match bracketed token <PERSON_1> or [PERSON_1]
-    const bracketedRegex = new RegExp(`<${escapedToken}>|\\[${escapedToken}\\]`, "g");
-    rehydratedText = rehydratedText.replace(bracketedRegex, originalValue);
+    // 1. If the token in tokenMap was explicitly defined with brackets (e.g. <PERSON_1>), match with brackets
+    if (isExplicitlyBracketed) {
+      const bracketedRegex = new RegExp(`<${escapedToken}>`, "g");
+      rehydratedText = rehydratedText.replace(bracketedRegex, originalValue);
+    }
 
     // 2. Match unbracketed token PERSON_1 or FPE mock value
-    // If token ends with digits (e.g. PERSON_1, EMAIL_1), use (?![0-9]) so concatenated LLM words like PERSON_1completed still rehydrate!
+    const isStructuralToken = /^[A-Z_]+_\d+$/.test(rawToken);
     const endsWithDigit = /\d$/.test(rawToken);
+    const leftBoundary = isStructuralToken ? "(?<![A-Z])" : "(?<![A-Za-z0-9_])";
     const rightBoundary = endsWithDigit ? "(?![0-9])" : "(?![A-Za-z0-9_])";
 
-    const unbracketedRegex = new RegExp(`(?<![A-Za-z0-9_])${escapedToken}${rightBoundary}`, "g");
+    const unbracketedRegex = new RegExp(`${leftBoundary}${escapedToken}${rightBoundary}`, "g");
 
-    rehydratedText = rehydratedText.replace(unbracketedRegex, (match, offset, string) => {
-      // If token is immediately followed by a letter (e.g. PERSON_1completed), insert a space after replacement
-      const nextChar = string[offset + match.length];
-      if (nextChar && /[a-zA-Z]/.test(nextChar)) {
-        return originalValue + " ";
-      }
-      return originalValue;
-    });
+    rehydratedText = rehydratedText.replace(unbracketedRegex, () => originalValue);
   }
 
   return rehydratedText;

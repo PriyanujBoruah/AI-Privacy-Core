@@ -6,10 +6,12 @@
   "scripts": {
     "dev": "wrangler dev",
     "deploy": "wrangler deploy",
+    "db:setup": "wrangler d1 execute privacy-db --local --file=./schema.sql",
     "test": "vitest run",
     "test:utility": "node test-utility-apis.js",
     "test:api": "node test_api_connection.js",
-    "test:connection": "node test_api_connection.js"
+    "test:connection": "node test_api_connection.js",
+    "test:dataset": "python test_api_dataset.py"
   },
   "keywords": [
     "privacy",
@@ -25,7 +27,11 @@
   "author": "Open AI Privacy Project",
   "license": "MIT",
   "dependencies": {
-    "hono": "^4.7.0"
+    "@hono/node-server": "^2.1.1",
+    "hono": "^4.7.0",
+    "hyparquet": "^1.30.1",
+    "hyparquet-compressors": "^1.1.1",
+    "selfsigned": "^5.5.0"
   },
   "devDependencies": {
     "@cloudflare/workers-types": "^4.20250214.0",

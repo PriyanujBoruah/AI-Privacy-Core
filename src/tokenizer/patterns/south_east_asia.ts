@@ -36,7 +36,7 @@ export const SOUTH_EAST_ASIA_RULES: Rule[] = [
     id: "RULE_MY_TIN",
     type: "FIN_MY_TIN",
     category: "south_east_asia",
-    pattern: /(?:^|\s)(?:TIN:?\s?|(?:Cukai\s?|LHDN\s?)?(?:SG|OG|C))([0-9]{10,11})\b/gi,
+    pattern: /(?:^|\s)(?:(?:TIN:?\s?|(?:Cukai|LHDN)[\s:]*)\s*((?:SG|OG|C)?\d{10,11})|((?:SG|OG)\d{10,11}))\b/gi,
     tokenPrefix: "MY_TIN",
   },
   {

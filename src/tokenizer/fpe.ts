@@ -58,6 +58,25 @@ export function generateSyntheticIBAN(index: number): string {
   return `GB29NWBK6016133192681${index}`;
 }
 
+const MOCK_USERNAMES = [
+  "user_alpha42",
+  "echo_dev",
+  "pixel_coder",
+  "silent_runner",
+  "quantum_nova",
+  "cyber_fox",
+  "blue_sky99",
+  "orbit_scout",
+];
+
+export function generateSyntheticUsername(index: number, originalValue?: string): string {
+  const base = MOCK_USERNAMES[(index - 1) % MOCK_USERNAMES.length];
+  if (originalValue && originalValue.startsWith("@")) {
+    return `@${base}`;
+  }
+  return base;
+}
+
 export function generateFPEToken(
   prefix: string,
   index: number,
@@ -66,6 +85,8 @@ export function generateFPEToken(
   switch (prefix.toUpperCase()) {
     case "PERSON":
       return generateSyntheticName(index);
+    case "USERNAME":
+      return generateSyntheticUsername(index, originalValue);
     case "EMAIL":
       return generateSyntheticEmail(index);
     case "PHONE":

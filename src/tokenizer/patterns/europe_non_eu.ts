@@ -178,7 +178,7 @@ export const EUROPE_NON_EU_RULES: Rule[] = [
     id: "RULE_AZ_FIN",
     type: "GOV_ID_AZ_FIN",
     category: "europe_non_eu",
-    pattern: /(?:^|\s)(?:F[Iİ]N:?\s?)([A-Z0-9]{7})\b/gi,
+    pattern: /(?:^|\s)(?:F[Iİ]N(?::\s*|\s+))([A-Z0-9]{7})\b/gi,
     tokenPrefix: "AZ_FIN",
   },
 

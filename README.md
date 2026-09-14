@@ -3,10 +3,14 @@
 > **Open-source, zero-trust privacy gateway for LLM pipelines. Tokenizes sensitive PII, sovereign national IDs, and financial records with mathematical checksum precision and sub-5ms edge latency.**
 
 [![License: Apache-2.0](https://img.shields.io/badge/License-Apache--2.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
-![Tests: 95 Passing](https://img.shields.io/badge/Tests-95%20Passing-brightgreen.svg)
-![Runtime: Cloudflare V8](https://img.shields.io/badge/Runtime-Cloudflare%20V8%20Edge-orange.svg)
+![Tests: 14 Passing](https://img.shields.io/badge/Tests-14%20Passing%20(Vitest)-brightgreen.svg)
+![Fidelity: 100%](https://img.shields.io/badge/Fidelity-100%25%20Exact%20Roundtrip-brightgreen.svg)
+![Dataset: 9.33M Prompts](https://img.shields.io/badge/Evaluated-9.33M%20Prompts-blue.svg)
+![Tokens: ~1.94B](https://img.shields.io/badge/Tokens-~1.94B%20Tested-purple.svg)
+![Throughput: 17,735 prompts/s](https://img.shields.io/badge/Engine%20Speed-17%2C735%20prompts%2Fs-success.svg)
+![Network: 2,691 RPS](https://img.shields.io/badge/HTTPS%20RPS-2%2C691%20req%2Fs-orange.svg)
+![Latency: Sub-millisecond Engine](https://img.shields.io/badge/Engine%20Latency-86%20µs%20(p50)-emerald.svg)
 ![Coverage: 109 Jurisdictions](https://img.shields.io/badge/Coverage-109%20Jurisdictions-indigo.svg)
-![Latency: Sub-5ms](https://img.shields.io/badge/Latency-%3C%205ms%20Edge%20SLA-emerald.svg)
 ![Zero Data Retention](https://img.shields.io/badge/Compliance-Zero%20Data%20Retention%20(ZDR)-success.svg)
 
 🌐 **Documentation & Live Playground:** [priyanujboruah.github.io/AI-Privacy-Core](https://priyanujboruah.github.io/AI-Privacy-Core/)
@@ -16,6 +20,7 @@
 ## 📌 Table of Contents
 
 - [Overview](#-overview)
+- [Test Results & Empirical Feats](#-test-results)
 - [Architecture & Core Differentiators](#-architecture--core-differentiators)
 - [Enterprise Security & Zero Data Retention (ZDR)](#-enterprise-security--zero-data-retention-zdr)
 - [API Reference](#-api-reference)
@@ -43,13 +48,101 @@ When users interact with frontier models (OpenAI GPT-4, Google Gemini, Anthropic
 
 | Metric | Specification |
 |---|---|
-| **Edge Execution SLA** | `< 5 ms` global latency overhead |
+| **Roundtrip Reconstruction Fidelity** | **100.0000%** exact bit-for-bit match on 9.33M prompt corpus (1.94 billion tokens) |
+| **Engine Execution Latency** | `86 µs` median ($p_{50}$), `314 µs` average engine latency |
+| **HTTPS Network Latency SLA** | `13.3 ms` median tokenize latency, `2,691 req/sec` over TLS 1.3 |
+| **In-Memory Engine Throughput** | `17,735 prompts/sec` on standard multi-core hardware |
 | **Geographic Coverage** | **109 Sovereign Jurisdictions** across 9 Canonical Packs (75+ with dedicated national ID checksums, 200+ for global financial and telecom standards) |
 | **Algorithmic Checksum Engines** | `67` standalone mathematical verification formulas (Verhoeff, Luhn, ISO 7064, Mod-11, Mod-23, Mod-26, Elfproef) |
 | **Pattern Rules** | `185` sovereign, financial, and context rules |
 | **Runtime Requirements** | Serverless V8 Edge Isolates (Cloudflare Workers), Node.js 18+, Bun |
 | **Storage Architecture** | Ephemeral in-memory RAM (zero disk persistence) or optional Cloudflare D1 SQL |
-| **Roundtrip Rehydration** | 100% exact, deterministic restoration with coreference consistency |
+
+---
+
+## 🧪 Test Results
+
+To empirically prove enterprise-grade reliability and zero information loss, **AI Privacy Core** underwent exhaustive testing on a unified corpus of **9,334,805 prompts (~1.94 billion tokens)** compiled from 5 diverse production datasets:
+- **LMSYS Chatbot Arena**: Multi-turn human-LLM conversations with diverse phrasing and grammar.
+- **OpenOrca**: Complex reasoning tasks, code snippets, and instructions.
+- **WildChat**: Unfiltered, in-the-wild conversational queries containing edge-case characters and formats.
+- **Enron Email Corpus**: Real-world corporate communications with email signatures, phone numbers, and financial tables.
+- **Customer Support Twitter**: Short-form unstructured complaints with courier tracking numbers, addresses, and order references.
+
+### 1. Full Dataset In-Memory Benchmark (9,334,805 Prompts)
+
+The standalone tokenizer and rehydration engine was evaluated across the entire 9.33M dataset using a parallel multi-core node architecture (`scripts/multicore_benchmark.mjs`). Every single prompt was tokenized, then rehydrated, and checked for byte-for-byte exact equality against the original input (`rehydratedText === originalPrompt`).
+
+| Metric | Benchmark Result | Significance |
+|---|---|---|
+| **Total Prompts Processed** | **9,334,805 / 9,334,805** | **100% of entire dataset** |
+| **Exact Roundtrip Matches** | **9,334,805** | **100.0000% Bit-for-Bit Exactness** |
+| **Roundtrip Mismatches** | **0 (Zero)** | **0.000000% error rate** |
+| **Total Intercepted Entities** | **10,281,399 entities** | Sovereign IDs, cards, emails, phones, tracking |
+| **Total Tokens Analyzed** | **1,937,516,961 tokens** | **~1.94 Billion tokens** |
+| **Total Execution Time** | **526.35 seconds (8.77 min)** | Continuous high-load execution |
+| **Processing Throughput** | **17,735.0 prompts / sec** | Multi-threaded V8 engine speed |
+| **Average Engine Latency** | **0.314 ms (314 µs)** | Sub-millisecond compute overhead |
+| **Median ($p_{50}$) Latency** | **0.086 ms (86 µs)** | Ultra-fast regex and checksum resolution |
+
+#### Progression Across Benchmark Runs:
+```
+┌─────────────────────────┬──────────────┬──────────────┬─────────────────────────┐
+│ Benchmark Iteration     │ Mismatches   │ Fidelity     │ Root Cause Addressed    │
+├─────────────────────────┼──────────────┼──────────────┼─────────────────────────┤
+│ Run 1 (Initial Engine)  │ 339 / 9.33M  │ 99.9964%     │ Lookbehinds & Caps      │
+│ Run 2 (Post-Fix)        │ 9 / 9.33M    │ 99.999903%   │ Invoice & Prefix Group  │
+│ Run 3 (Hardened Engine) │ 0 / 9.33M    │ 100.000000%  │ PERFECT CLEAN SWEEP     │
+└─────────────────────────┴──────────────┴──────────────┴─────────────────────────┘
+```
+*Audit Summary: [`multicore_benchmark_summary.json`](multicore_benchmark_summary.json)*
+
+---
+
+### 2. Real-World HTTPS Socket Latency Benchmark (50,000 Prompts)
+
+To measure actual network latency under production conditions (including TLS 1.3 handshakes, TCP socket pooling, HTTP headers, JSON serialization, and full roundtrips), a dedicated network benchmark was conducted on **50,000 random prompts** sampled uniformly across all 94 row groups of the dataset (`scripts/http_latency_benchmark.mjs`).
+
+Each prompt completed a **full 2-way network roundtrip** over TLS 1.3:
+1. `POST /v1/tokenize` over HTTPS $\rightarrow$ records tokenize network latency.
+2. `POST /v1/detokenize` over HTTPS using the returned `sessionId` and `sanitizedText` $\rightarrow$ records detokenize latency.
+3. Strict verification that `rehydratedText === originalPrompt`.
+
+#### High-Level Network Performance:
+- **Total Prompts Tested**: 50,000
+- **Total HTTPS Network Calls**: **100,000 requests**
+- **Total Elapsed Time**: **37.15 seconds**
+- **Prompt Throughput**: **1,345.98 prompts / sec**
+- **HTTPS Request Throughput**: **2,691.95 HTTP requests / sec**
+- **Token Throughput**: **277,506 tokens / sec**
+- **Exact Roundtrip Matches**: **50,000 / 50,000 (100.0000%)**
+- **Socket / Network Drops**: **0**
+
+#### Real-World Latency Percentile Distribution (TLS 1.3 HTTPS Sockets):
+| Network Operation | Min | Average | $p_{50}$ (Median) | $p_{90}$ | $p_{95}$ | $p_{99}$ | $p_{99.9}$ | Max |
+|---|---|---|---|---|---|---|---|---|
+| **POST `/v1/tokenize`** | 4.60 ms | 14.35 ms | **13.30 ms** | 20.98 ms | 25.22 ms | 38.00 ms | 62.68 ms | 73.93 ms |
+| **POST `/v1/detokenize`** | 4.50 ms | 7.92 ms | **7.20 ms** | 10.91 ms | 12.81 ms | 18.31 ms | 26.96 ms | 64.22 ms |
+| **Total Roundtrip (End-to-End)** | 12.06 ms | 22.27 ms | **20.81 ms** | 30.86 ms | 36.36 ms | 51.55 ms | 79.22 ms | 104.20 ms |
+
+*Audit Summary: [`http_latency_benchmark_summary.json`](http_latency_benchmark_summary.json)*
+
+---
+
+### 3. Reproduce the Benchmarks Locally
+
+Anyone can reproduce these empirical results directly from the repository:
+
+```bash
+# 1. Run all unit tests (14 passing tests)
+npm test
+
+# 2. Run the 50,000-prompt real-world HTTPS socket benchmark
+node scripts/http_latency_benchmark.mjs --samples 50000 --concurrency 30
+
+# 3. Run the direct multi-core benchmark on unified_prompts.parquet
+node scripts/multicore_benchmark.mjs --workers 8
+```
 
 ---
 

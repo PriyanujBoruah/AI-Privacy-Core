@@ -5,6 +5,16 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>AI Privacy Core - Enterprise Data De-Identification & Reversible Tokenization Engine</title>
   <meta name="description" content="Sub-5ms Edge-native Data De-identification & Reversible Tokenization Engine for Generative AI, LLM Pipelines, and Enterprise Data Workflows.">
+  <script>
+    // Redirect root visitors to the test results / empirical benchmark page
+    const urlParams = new URLSearchParams(window.location.search);
+    if (!urlParams.has('docs')) {
+      window.location.replace("test-results.html" + window.location.hash);
+    }
+  </script>
+  <noscript>
+    <meta http-equiv="refresh" content="0; url=test-results.html">
+  </noscript>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
@@ -1103,6 +1113,10 @@
     <div class="nav-group">
       <div class="nav-heading">Getting Started</div>
       <a href="#overview" class="nav-item active">Overview</a>
+      <a href="test-results.html" class="nav-item" style="color: #0284c7; font-weight: 600;">
+        📊 Benchmark Results
+        <span class="nav-badge" style="background: #ecfdf5; color: #059669; font-weight: 700;">100% SLA</span>
+      </a>
       <a href="#sustainable-development" class="nav-item">Sustainable Development</a>
       <a href="#playground" class="nav-item">Interactive Tester</a>
       <a href="#quickstart" class="nav-item">Quickstart Guide</a>
